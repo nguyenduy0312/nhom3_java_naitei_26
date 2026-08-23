@@ -14,8 +14,13 @@ import lombok.RequiredArgsConstructor;
 import vn.naitei.nhom3.expensemanagement.dto.income.AdminIncomeFilterRequest;
 import vn.naitei.nhom3.expensemanagement.dto.income.AdminIncomePageResponse;
 import vn.naitei.nhom3.expensemanagement.dto.income.AdminIncomeResponse;
+import vn.naitei.nhom3.expensemanagement.dto.income.AdminIncomeUpdateRequest;
+import vn.naitei.nhom3.expensemanagement.entity.Category;
 import vn.naitei.nhom3.expensemanagement.entity.Income;
+import vn.naitei.nhom3.expensemanagement.entity.enums.CategoryType;
+import vn.naitei.nhom3.expensemanagement.exception.BadRequestException;
 import vn.naitei.nhom3.expensemanagement.exception.ResourceNotFoundException;
+import vn.naitei.nhom3.expensemanagement.repository.CategoryRepository;
 import vn.naitei.nhom3.expensemanagement.repository.IncomeRepository;
 import vn.naitei.nhom3.expensemanagement.repository.specification.IncomeSpecification;
 import vn.naitei.nhom3.expensemanagement.service.IncomeAdminService;
@@ -30,6 +35,7 @@ public class IncomeAdminServiceImpl implements IncomeAdminService {
             "amount", "amount");
 
     private final IncomeRepository incomeRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -54,6 +60,28 @@ public class IncomeAdminServiceImpl implements IncomeAdminService {
                 .orElseThrow(() -> ResourceNotFoundException.of("Thu nhập", id)));
     }
 
+    @Override
+    @Transactional
+    public AdminIncomeResponse update(Long id, AdminIncomeUpdateRequest request) {
+        Income income = findIncome(id);
+        income.setTitle(request.getSource().trim());
+        income.setAmount(request.getAmount());
+        income.setIncomeDate(request.getDate());
+        income.setNote(request.getNote());
+
+        if (request.getCategoryId() != null) {
+            income.setCategory(validateCategory(income, request.getCategoryId()));
+        }
+
+        return toAdminResponse(incomeRepository.save(income));
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        incomeRepository.delete(findIncome(id));
+    }
+
     private AdminIncomeResponse toAdminResponse(Income income) {
         return new AdminIncomeResponse(
                 income.getId(),
@@ -68,6 +96,19 @@ public class IncomeAdminServiceImpl implements IncomeAdminService {
                 income.getUser().getId(),
                 income.getUser().getName(),
                 income.getUser().getEmail());
+    }
+
+    private Income findIncome(Long id) {
+        return incomeRepository.findById(id)
+                .orElseThrow(() -> ResourceNotFoundException.of("Thu nhập", id));
+    }
+
+    private Category validateCategory(Income income, Long categoryId) {
+        return categoryRepository.findVisibleToUserAndType(
+                        income.getUser().getId(), CategoryType.INCOME).stream()
+                .filter(category -> category.getId().equals(categoryId))
+                .findFirst()
+                .orElseThrow(() -> new BadRequestException("Danh mục thu nhập không hợp lệ"));
     }
 
     private Sort createSort(String sortParameter) {
