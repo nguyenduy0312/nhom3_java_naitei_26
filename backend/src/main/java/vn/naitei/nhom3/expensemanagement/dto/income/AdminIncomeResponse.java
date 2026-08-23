@@ -1,9 +1,5 @@
 package vn.naitei.nhom3.expensemanagement.dto.income;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import lombok.Getter;
 
 @Getter
@@ -11,13 +7,13 @@ public class AdminIncomeResponse {
 
     private final Long id;
     private final String source;
-    private final BigDecimal amount;
-    private final LocalDate date;
+    private final java.math.BigDecimal amount;
+    private final java.time.LocalDate date;
     private final String note;
     private final Long categoryId;
     private final String categoryName;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
+    private final java.time.LocalDateTime createdAt;
+    private final java.time.LocalDateTime updatedAt;
     private final Long userId;
     private final String userName;
     private final String userEmail;
@@ -25,13 +21,13 @@ public class AdminIncomeResponse {
     public AdminIncomeResponse(
             Long id,
             String source,
-            BigDecimal amount,
-            LocalDate date,
+            java.math.BigDecimal amount,
+            java.time.LocalDate date,
             String note,
             Long categoryId,
             String categoryName,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt,
+            java.time.LocalDateTime createdAt,
+            java.time.LocalDateTime updatedAt,
             Long userId,
             String userName,
             String userEmail) {
