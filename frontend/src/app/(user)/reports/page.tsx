@@ -105,17 +105,17 @@ export default function ReportsPage() {
   );
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-8">
-      <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+    <div className="mx-auto w-full max-w-7xl space-y-8 text-[#131b2e]">
+      <header className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight text-[#131b2e] md:text-3xl">
             Reports &amp; Analytics
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Phân tích dòng tiền, xu hướng và phân bổ chi tiêu
+          <p className="mt-1 text-sm text-[#515f74]">
+            Deep-dive financial visual analytics, trends, and categorical distribution
           </p>
         </div>
-        <div className="flex items-center gap-1 rounded-xl border border-gray-200 bg-white p-1.5 shadow-sm">
+        <div className="flex items-center gap-1 rounded-xl border border-[#E2E8F0] bg-white p-1.5 shadow-xs">
           {(Object.keys(periodLabels) as ReportPeriod[]).map((option) => (
             <button
               key={option}
@@ -127,8 +127,8 @@ export default function ReportsPage() {
               }}
               className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                 period === option
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                  ? "bg-[#004ac6] text-white shadow-xs"
+                  : "text-[#515f74] hover:bg-[#F8FAFC] hover:text-[#131b2e]"
               }`}
             >
               {periodLabels[option]}
@@ -137,16 +137,16 @@ export default function ReportsPage() {
         </div>
       </header>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <label className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-sm font-medium text-gray-700 shadow-sm hover:border-blue-300 hover:text-blue-700"
+      <div className="mb-8 flex flex-wrap items-center gap-3">
+        <label className="inline-flex items-center gap-2 rounded-xl border border-[#E2E8F0] bg-white px-3.5 py-2 text-sm font-medium text-[#515f74] shadow-xs hover:border-[#004ac6] hover:text-[#004ac6]"
         >
-          <CalendarDays className="h-4 w-4 text-blue-600" aria-hidden="true" />
+          <CalendarDays className="h-4 w-4 text-[#004ac6]" aria-hidden="true" />
           <span className="sr-only">Select report period</span>
           <select
             aria-label="Select report period"
             value={periodValue}
             onChange={(event) => setPeriodValue(event.target.value)}
-            className="cursor-pointer appearance-none bg-transparent pr-1 text-sm font-medium text-gray-700 outline-none"
+            className="cursor-pointer appearance-none bg-transparent pr-1 text-sm font-medium text-[#515f74] outline-none"
           >
             {periodOptions.map((option) => (
               <option key={option.value} value={option.value}>{option.label}</option>
@@ -154,11 +154,11 @@ export default function ReportsPage() {
           </select>
           <ChevronDown className="h-4 w-4 text-gray-400" aria-hidden="true" />
         </label>
-        <span className="text-xs text-gray-400">Dữ liệu theo kỳ đã chọn</span>
+        <span className="text-xs text-[#515f74]">Data for selected period</span>
       </div>
 
-      <section className="grid grid-cols-1 gap-5 md:grid-cols-3">
-        <Card className="border-emerald-100 bg-white p-5">
+      <section className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <Card className="border border-[#E2E8F0] bg-white p-6 shadow-xs">
           <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Total Net Savings</p>
           <p className="mt-2 text-2xl font-bold tabular-nums text-emerald-600">
             {isLoading ? <LoaderCircle className="h-6 w-6 animate-spin" aria-label="Loading" /> : money.format(comparisonQuery.data?.balance ?? 0)}
@@ -170,12 +170,12 @@ export default function ReportsPage() {
               : "No savings data available"}
           </div>
         </Card>
-        <Card className="p-5">
+        <Card className="border border-[#E2E8F0] bg-white p-6 shadow-xs">
           <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Daily Average Spending</p>
           <p className="mt-2 text-2xl font-bold tabular-nums text-gray-900">-</p>
           <p className="mt-2 text-xs text-gray-500">Daily average is not provided by the report API</p>
         </Card>
-        <Card className="border-blue-100 p-5">
+        <Card className="border border-[#E2E8F0] bg-white p-6 shadow-xs">
           <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Top Expense Category</p>
           <p className="mt-2 text-2xl font-bold text-blue-700">{topCategory?.name ?? "-"}</p>
           <p className="mt-2 text-xs text-gray-500">
@@ -192,8 +192,8 @@ export default function ReportsPage() {
         </div>
       )}
 
-      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card className="p-5 md:p-7">
+      <section className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <Card className="border border-[#E2E8F0] bg-white p-6 shadow-xs md:p-8">
           <div className="mb-6 flex flex-col justify-between gap-3 border-b border-gray-100 pb-4 sm:flex-row sm:items-start">
             <div>
               <h2 className="text-base font-bold text-gray-900">Income vs. Expense Trend</h2>
@@ -229,7 +229,7 @@ export default function ReportsPage() {
           )}
         </Card>
 
-        <Card className="p-5 md:p-7">
+        <Card className="border border-[#E2E8F0] bg-white p-6 shadow-xs md:p-8">
           <div className="mb-6 flex flex-col justify-between gap-3 border-b border-gray-100 pb-4 sm:flex-row sm:items-start">
             <div>
               <h2 className="text-base font-bold text-gray-900">Category Distribution</h2>

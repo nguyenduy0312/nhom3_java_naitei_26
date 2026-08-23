@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AlertCircle, Eye, Pencil, RotateCcw, Trash2 } from "lucide-react";
+import { AlertCircle, Pencil, RotateCcw, Search, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Pagination from "@/components/ui/Pagination";
@@ -12,11 +13,13 @@ import type { AdminIncomeFilters } from "@/features/admin-income/types";
 import { useCategories } from "@/features/category/hooks";
 import { useUsers } from "@/features/user/hooks";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import AdminIncomeDeleteModal from "@/features/admin-income/components/AdminIncomeDeleteModal";
 
 const PAGE_SIZE = 10;
 const DEFAULT_SORT = "date,desc";
 
 export default function AdminIncomesPage() {
+  const router = useRouter();
   const [page, setPage] = useState(0);
   const [userId, setUserId] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -24,6 +27,8 @@ export default function AdminIncomesPage() {
   const [toDate, setToDate] = useState("");
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [dateError, setDateError] = useState("");
+  const [search, setSearch] = useState("");
+  const [deleteIncome, setDeleteIncome] = useState<import("@/features/admin-income/types").AdminIncome | null>(null);
   const deleteMutation = useDeleteAdminIncome();
 
   const filters: AdminIncomeFilters = {
@@ -42,7 +47,7 @@ export default function AdminIncomesPage() {
   const data = query.data;
   const users = Array.isArray(usersQuery.data?.content) ? usersQuery.data.content : [];
   const categories = Array.isArray(categoriesQuery.data) ? categoriesQuery.data : [];
-  const hasActiveFilter = Boolean(userId || categoryId || fromDate || toDate || sort !== DEFAULT_SORT);
+  const hasActiveFilter = Boolean(search || userId || categoryId || fromDate || toDate || sort !== DEFAULT_SORT);
 
   const updateDate = (from: string, to: string) => {
     setFromDate(from);
@@ -52,6 +57,7 @@ export default function AdminIncomesPage() {
   };
 
   const resetFilters = () => {
+    setSearch("");
     setUserId("");
     setCategoryId("");
     setFromDate("");
@@ -61,34 +67,44 @@ export default function AdminIncomesPage() {
     setPage(0);
   };
 
-  const deleteIncome = (id: number, source: string) => {
-    if (window.confirm(`Xóa khoản thu nhập "${source}"?`)) {
-      deleteMutation.mutate(id);
+  const visibleItems = (data?.items ?? []).filter((income) => {
+    const keyword = search.trim().toLowerCase();
+    return !keyword || [income.source, income.amount, income.categoryName, income.userName, income.userEmail].join(" ").toLowerCase().includes(keyword);
+  });
+
+  const applyDatePreset = (value: string) => {
+    const today = new Date();
+    if (value === "all") {
+      updateDate("", "");
+      return;
     }
+    const offset = value === "last_month" ? -1 : 0;
+    const start = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+    const end = new Date(today.getFullYear(), today.getMonth() + offset + 1, 0);
+    updateDate(start.toISOString().slice(0, 10), end.toISOString().slice(0, 10));
   };
 
   return (
     <div className="space-y-6">
       <header className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">FinTrack Admin</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
             System Income Records
           </h1>
           <p className="mt-1 text-sm text-gray-500">
             Audit, inspect, and moderate all user income records across the platform
           </p>
         </div>
-        <div className="rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2 text-right text-xs text-emerald-800">
-          <span className="block font-semibold">Tổng giao dịch</span>
-          <strong className="text-lg">{data?.totalItems ?? "-"}</strong>
-        </div>
       </header>
 
       <section className="rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-sm">
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="relative min-w-[240px] flex-1">
+            <Search className="absolute left-3.5 top-1/2 z-10 h-[18px] w-[18px] -translate-y-1/2 text-[#515f74]" aria-hidden="true" />
+            <input type="text" value={search} onChange={(event) => { setSearch(event.target.value); setPage(0); }} placeholder="Search income title, source, or amount..." aria-label="Search income title, source, or amount" className="w-full rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] py-2 pl-10 pr-4 text-sm transition-all focus:border-[#004ac6] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#004ac6]/20" />
+          </div>
+          <div className="flex flex-wrap items-center gap-2.5">
           <Select
-            label="Người dùng / tài khoản"
             value={userId}
             onChange={(event) => { setUserId(event.target.value); setPage(0); }}
             options={[
@@ -96,6 +112,16 @@ export default function AdminIncomesPage() {
               ...users.map((user) => ({ label: `${user.name} (${user.email})`, value: user.id })),
             ]}
           />
+          <Select
+            aria-label="Filter by date range"
+            value={fromDate && toDate ? "custom" : "all"}
+            onChange={(event) => applyDatePreset(event.target.value)}
+            options={[{ label: "All Time", value: "all" }, { label: "This Month", value: "this_month" }, { label: "Last Month", value: "last_month" }, { label: "Custom range", value: "custom" }]}
+          />
+          <Button variant="ghost" size="sm" onClick={resetFilters}><RotateCcw className="h-4 w-4" aria-hidden="true" />Reset</Button>
+          </div>
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <Select
             label="Danh mục"
             value={categoryId}
@@ -132,12 +158,6 @@ export default function AdminIncomesPage() {
             ]}
           />
         </div>
-        <div className="mt-3 flex justify-end">
-          <Button variant="ghost" size="sm" onClick={resetFilters}>
-            <RotateCcw className="h-4 w-4" aria-hidden="true" />
-            Đặt lại
-          </Button>
-        </div>
       </section>
 
       <section className="overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white shadow-sm">
@@ -161,19 +181,19 @@ export default function AdminIncomesPage() {
                   <tr>
                     <th className="px-6 py-3.5">User / Account</th>
                     <th className="px-4 py-3.5">Income Source / Title</th>
-                    <th className="px-4 py-3.5">Category</th>
+                    <th className="px-4 py-3.5">Type</th>
                     <th className="px-4 py-3.5 text-right">Amount</th>
                     <th className="px-4 py-3.5">Date</th>
                     <th className="px-6 py-3.5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#E2E8F0]">
-                  {(data?.items ?? []).length === 0 ? (
+                  {visibleItems.length === 0 ? (
                     <tr><td colSpan={6} className="px-6 py-16 text-center text-gray-500">
                       {hasActiveFilter ? "Không tìm thấy khoản thu nhập phù hợp" : "Chưa có khoản thu nhập nào"}
                     </td></tr>
-                  ) : data?.items.map((income) => (
-                    <tr key={income.id} className="transition-colors hover:bg-slate-50/70">
+                  ) : visibleItems.map((income) => (
+                    <tr key={income.id} onClick={() => router.push(`/admin/incomes/${income.id}`)} className="group cursor-pointer transition-colors hover:bg-slate-50/70">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-emerald-200 bg-emerald-100 text-xs font-bold text-emerald-700">
@@ -181,7 +201,7 @@ export default function AdminIncomesPage() {
                           </div>
                           <div className="min-w-0">
                             <p className="truncate font-semibold text-gray-900">{income.userName}</p>
-                            <p className="truncate text-xs text-gray-500">{income.userEmail}</p>
+                            <p className="truncate text-[11px] text-[#515f74]">User ID: {income.userId}</p>
                           </div>
                         </div>
                       </td>
@@ -191,17 +211,14 @@ export default function AdminIncomesPage() {
                           {income.categoryName}
                         </span>
                       </td>
-                      <td className="px-4 py-4 text-right font-semibold text-emerald-600">+{formatCurrency(income.amount)}</td>
-                      <td className="px-4 py-4 text-xs font-medium text-gray-600">{formatDate(income.date)}</td>
+                      <td className="px-4 py-4 text-right font-mono text-base font-bold text-emerald-600">+{formatCurrency(income.amount)}</td>
+                      <td className="px-4 py-4 text-xs font-medium text-[#515f74]">{formatDate(income.date)}</td>
                       <td className="px-6 py-4 text-right">
                         <div className="inline-flex items-center gap-1">
-                          <Link href={`/admin/incomes/${income.id}`} title="Xem hoặc sửa" aria-label={`Xem hoặc sửa ${income.source}`} className="rounded-lg p-1.5 text-gray-500 hover:bg-blue-50 hover:text-blue-600">
-                            <Eye className="h-4 w-4" aria-hidden="true" />
-                          </Link>
-                          <Link href={`/admin/incomes/${income.id}`} title="Sửa" aria-label={`Sửa ${income.source}`} className="rounded-lg p-1.5 text-gray-500 hover:bg-blue-50 hover:text-blue-600">
+                          <Link href={`/admin/incomes/${income.id}`} onClick={(event) => event.stopPropagation()} title="Edit" aria-label={`Edit ${income.source}`} className="rounded-lg p-1.5 text-[#515f74] hover:bg-blue-50 hover:text-[#004ac6]">
                             <Pencil className="h-4 w-4" aria-hidden="true" />
                           </Link>
-                          <button type="button" title="Xóa" aria-label={`Xóa ${income.source}`} disabled={deleteMutation.isPending} onClick={() => deleteIncome(income.id, income.source)} className="rounded-lg p-1.5 text-gray-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-50">
+                          <button type="button" title="Delete" aria-label={`Delete ${income.source}`} disabled={deleteMutation.isPending} onClick={(event) => { event.stopPropagation(); setDeleteIncome(income); }} className="rounded-lg p-1.5 text-[#515f74] hover:bg-red-50 hover:text-red-600 disabled:opacity-50">
                             <Trash2 className="h-4 w-4" aria-hidden="true" />
                           </button>
                         </div>
@@ -224,6 +241,7 @@ export default function AdminIncomesPage() {
           </>
         )}
       </section>
+      <AdminIncomeDeleteModal income={deleteIncome} isDeleting={deleteMutation.isPending} errorMessage={deleteMutation.isError ? "Unable to delete this income entry." : undefined} onClose={() => setDeleteIncome(null)} onConfirm={() => deleteIncome && deleteMutation.mutate(deleteIncome.id, { onSuccess: () => setDeleteIncome(null) })} />
     </div>
   );
 }

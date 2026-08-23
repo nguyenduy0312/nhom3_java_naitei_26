@@ -4,15 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Activity,
   Bookmark,
   FileDown,
   FileUp,
   Group,
   History,
+  Landmark,
   LogOut,
   Menu,
   ReceiptText,
+  Shield,
   Tags,
   X,
 } from "lucide-react";
@@ -23,7 +24,7 @@ const navigation = [
   { label: "Global Categories", href: "/admin/categories", icon: Tags },
   { label: "Budget Templates", href: "/admin/budget-templates", icon: Bookmark },
   { label: "System Expenses", href: "/admin/expenses", icon: ReceiptText },
-  { label: "System Incomes", href: "/admin/incomes", icon: ReceiptText },
+  { label: "System Incomes", href: "/admin/incomes", icon: Landmark },
   { label: "Activity Logs", href: "/admin/activity-logs", icon: History },
 ];
 
@@ -57,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="mb-6 flex items-start justify-between px-6">
           <Link href="/admin/users" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-900 to-[#004ac6] text-xl font-bold text-white shadow-md">
-              <Bookmark className="h-6 w-6" />
+              <Shield className="h-6 w-6" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
@@ -144,8 +145,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <main className="min-h-screen md:-mt-[100vh] md:ml-[260px]">
         <div className="flex items-center justify-between border-b border-[#E2E8F0] bg-white p-4 md:hidden">
           <div className="flex items-center gap-2 font-bold">
-            <Activity className="h-5 w-5 text-[#004ac6]" />
-            FinTrack Admin
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-white">
+              <Shield className="h-[18px] w-[18px]" aria-hidden="true" />
+            </div>
+            <span className="font-bold text-[#131b2e]">Admin Console</span>
           </div>
           <button
             type="button"

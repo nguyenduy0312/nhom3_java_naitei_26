@@ -20,15 +20,15 @@ export default function UserLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50/70 font-sans">
+    <div className="min-h-screen bg-[#F8FAFC] font-sans">
       {/* Header thu nhỏ chỉ hiển thị trên Mobile */}
-      <div className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 lg:hidden">
-        <div className="flex items-center gap-2 font-bold text-blue-700">
+      <div className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-[#E2E8F0] bg-white px-4 lg:hidden">
+        <div className="flex items-center gap-2 font-bold text-[#004ac6]">
           FinTrack Pro
         </div>
         <button
           onClick={() => setSidebarOpen(true)}
-          className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"
+          className="rounded-lg p-2 text-[#515f74] hover:bg-[#F8FAFC]"
         >
           <Menu className="h-5 w-5" />
         </button>

@@ -1,12 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { useBudgetTemplates, useDeleteBudgetTemplate } from "@/features/budget-template/hooks";
+import BudgetTemplateDeleteModal from "@/features/budget-template/BudgetTemplateDeleteModal";
 
 export default function AdminBudgetTemplatesPage() {
+  const [deleteName, setDeleteName] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const { data: templates, isLoading, isError } = useBudgetTemplates();
   const deleteMutation = useDeleteBudgetTemplate();
 
@@ -17,7 +21,7 @@ export default function AdminBudgetTemplatesPage() {
           <h1 className="text-2xl font-bold tracking-tight text-[#131b2e] md:text-3xl">
             System Budget Templates
           </h1>
-          <p className="mt-1 text-sm text-[#515f74]">
+            <p className="mt-1 text-sm text-[#515f74]">
             Preconfigured monthly budget allocations for users to quickly apply to their personal
             accounts
           </p>
@@ -60,7 +64,7 @@ export default function AdminBudgetTemplatesPage() {
             return (
               <div
                 key={template.id}
-                className="flex flex-col justify-between rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm transition-all hover:shadow-md"
+                className="flex flex-col justify-between rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-xs transition-all hover:shadow-md"
               >
                 <div>
                   <div className="mb-4 flex items-center justify-between gap-3">
@@ -126,11 +130,7 @@ export default function AdminBudgetTemplatesPage() {
                       disabled={deleteMutation.isPending}
                       title={`Delete ${template.name}`}
                       aria-label={`Delete ${template.name}`}
-                      onClick={() => {
-                        if (window.confirm(`Delete budget template "${template.name}"?`)) {
-                          deleteMutation.mutate(template.id);
-                        }
-                      }}
+                      onClick={() => { setDeleteName(template.name); setDeleteId(template.id); }}
                     >
                       <Trash2 className="h-4 w-4 text-[#515f74]" />
                     </Button>
@@ -141,6 +141,13 @@ export default function AdminBudgetTemplatesPage() {
           })}
         </div>
       )}
+
+      <BudgetTemplateDeleteModal
+        name={deleteName}
+        isDeleting={deleteMutation.isPending}
+        onCancel={() => { setDeleteName(null); setDeleteId(null); }}
+        onConfirm={() => deleteId && deleteMutation.mutate(deleteId, { onSuccess: () => { setDeleteName(null); setDeleteId(null); } })}
+      />
     </div>
   );
 }

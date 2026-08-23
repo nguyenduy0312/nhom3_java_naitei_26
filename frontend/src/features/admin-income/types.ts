@@ -36,6 +36,7 @@ export interface AdminIncomeUpdateRequest {
   amount?: number;
   date?: string;
   note?: string | null;
+  categoryId?: number;
 }
 
 export type AdminIncomeDeleteInput = number;

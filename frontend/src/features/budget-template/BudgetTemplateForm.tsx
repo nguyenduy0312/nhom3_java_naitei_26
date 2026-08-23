@@ -234,11 +234,9 @@ export default function BudgetTemplateForm({ mode, id }: BudgetTemplateFormProps
             />
             <Input
               label="Default Target Month"
-              type="number"
-              min={1}
-              max={12}
-              value={values.month}
-              onChange={(event) => setValues({ ...values, month: event.target.value })}
+              type="month"
+              value={values.month ? `${new Date().getFullYear()}-${values.month.padStart(2, "0")}` : ""}
+              onChange={(event) => setValues({ ...values, month: event.target.value.split("-")[1] ?? "" })}
               error={errors.month}
               className="rounded-xl bg-[#F8FAFC] px-4 py-2.5 text-sm focus:bg-white"
             />
@@ -280,7 +278,6 @@ export default function BudgetTemplateForm({ mode, id }: BudgetTemplateFormProps
                 >
                   <div className="min-w-0 flex-1 sm:min-w-[200px]">
                     <Select
-                      label={`Category ${index + 1}`}
                       options={expenseCategories.map((category: Category) => ({
                         label: category.name,
                         value: category.id,
@@ -297,7 +294,6 @@ export default function BudgetTemplateForm({ mode, id }: BudgetTemplateFormProps
                   </div>
                   <div className="sm:w-44">
                     <Input
-                      label="Amount"
                       type="number"
                       min={0}
                       step="0.01"

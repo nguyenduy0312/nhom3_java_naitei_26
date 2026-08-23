@@ -35,6 +35,8 @@ body {
   --color-primary-light: #eff4ff;
   --color-secondary: #515f74;
   --color-danger: #DC2626;
+  --color-success: #16A34A;
+  --color-warning: #D97706;
   --color-background: #faf8ff;
   --color-bg-subtle: #F8FAFC;
   --color-surface: #FFFFFF;

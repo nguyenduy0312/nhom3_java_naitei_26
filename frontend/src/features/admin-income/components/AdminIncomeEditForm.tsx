@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Check, Trash2 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import Select from "@/components/ui/Select";
 import type { AdminIncome, AdminIncomeUpdateRequest } from "../types";
 
 interface AdminIncomeEditFormProps {
@@ -13,6 +14,7 @@ interface AdminIncomeEditFormProps {
   onDelete: () => void;
   isUpdating: boolean;
   isDeleting: boolean;
+  categories?: { id: string; name: string }[];
   errorMessage?: string;
 }
 
@@ -22,12 +24,14 @@ export default function AdminIncomeEditForm({
   onDelete,
   isUpdating,
   isDeleting,
+  categories = [],
   errorMessage,
 }: AdminIncomeEditFormProps) {
   const [source, setSource] = useState(income.source);
   const [amount, setAmount] = useState(String(income.amount));
   const [date, setDate] = useState(income.date);
   const [note, setNote] = useState(income.note ?? "");
+  const [categoryId, setCategoryId] = useState(String(income.categoryId));
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -36,6 +40,7 @@ export default function AdminIncomeEditForm({
       amount: Number(amount),
       date,
       note: note.trim() || null,
+      categoryId: Number(categoryId),
     });
   };
 
@@ -93,28 +98,41 @@ export default function AdminIncomeEditForm({
           value={date}
           onChange={(event) => setDate(event.target.value)}
         />
+        <Select
+          label="Income Classification Type"
+          value={categoryId}
+          onChange={(event) => setCategoryId(event.target.value)}
+          options={[
+            { label: income.categoryName, value: String(income.categoryId) },
+            ...categories
+              .filter((category) => Number(category.id) !== income.categoryId)
+              .map((category) => ({ label: category.name, value: String(category.id) })),
+          ]}
+          className="rounded-xl bg-[#F8FAFC] py-2.5 md:col-span-2"
+        />
       </div>
 
       <div>
-        <label htmlFor="note" className="mb-1 block text-sm font-medium text-gray-700">
+        <label htmlFor="note" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#515f74]">
           Remarks & Transaction Notes
         </label>
         <textarea
           id="note"
-          rows={4}
+          rows={3}
           value={note}
           onChange={(event) => setNote(event.target.value)}
-          className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="block w-full rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] px-4 py-2.5 text-sm transition-colors focus:border-[#004ac6] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#004ac6]/20"
         />
       </div>
 
       <div className="flex flex-col-reverse justify-between gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center">
         <Button
           type="button"
-          variant="danger"
+          variant="ghost"
           size="sm"
           isLoading={isDeleting}
           disabled={isUpdating}
+          className="bg-red-50 text-[#DC2626] hover:bg-red-100 focus:ring-red-200"
           onClick={onDelete}
         >
           <Trash2 className="h-4 w-4" aria-hidden="true" />
@@ -123,7 +141,7 @@ export default function AdminIncomeEditForm({
         <div className="flex items-center justify-end gap-3">
           <Link
             href="/admin/incomes"
-            className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-50"
+            className="rounded-xl border border-[#E2E8F0] bg-white px-5 py-2.5 text-sm font-semibold text-[#515f74] hover:bg-[#F8FAFC]"
           >
             Cancel
           </Link>

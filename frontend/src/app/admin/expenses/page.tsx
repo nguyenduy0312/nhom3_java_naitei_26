@@ -63,17 +63,12 @@ export default function AdminExpensesPage() {
     <div className="space-y-6">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">FinTrack Admin</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
             System Expense Records
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Kiểm tra và lọc toàn bộ khoản chi tiêu của người dùng trong hệ thống
+            Audit, inspect, filter, and moderate all user expense records across the entire platform
           </p>
-        </div>
-        <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-right text-xs text-blue-800">
-          <span className="block font-semibold">Tổng giao dịch</span>
-          <strong className="text-lg">{data?.totalItems ?? "-"}</strong>
         </div>
       </div>
 
@@ -82,21 +77,21 @@ export default function AdminExpensesPage() {
           <div className="relative md:col-span-2">
             <Search className="absolute bottom-3 left-3 z-10 h-4 w-4 text-gray-400" aria-hidden="true" />
             <Input
-              label="Tìm kiếm"
+              label="Search"
               aria-label="Tìm theo tên khoản chi"
               className="pl-9"
-              placeholder="Tìm tên khoản chi..."
+              placeholder="Search expense description, note, or ID..."
               value={filters.search}
               onChange={(event) => changeFilter("search", event.target.value)}
             />
           </div>
           <Select
-            label="Người dùng / tài khoản"
+            label="User / Account"
             aria-label="Lọc theo người dùng"
             value={filters.userId}
             onChange={(event) => changeFilter("userId", event.target.value)}
             options={[
-              { label: "Tất cả người dùng", value: "" },
+              { label: "All Users", value: "" },
               ...userOptions.map((user) => ({
                 label: `${user.name} (${user.email})`,
                 value: user.id,
@@ -104,12 +99,12 @@ export default function AdminExpensesPage() {
             ]}
           />
           <Select
-            label="Danh mục"
+            label="Category"
             aria-label="Lọc theo danh mục"
             value={filters.categoryId}
             onChange={(event) => changeFilter("categoryId", event.target.value)}
             options={[
-              { label: "Tất cả danh mục", value: "" },
+              { label: "All Categories", value: "" },
               ...categoryOptions.map((category) => ({
                 label: category.name,
                 value: String(category.id),
@@ -117,7 +112,7 @@ export default function AdminExpensesPage() {
             ]}
           />
           <Select
-            label="Sắp xếp"
+            label="Sort"
             aria-label="Sắp xếp khoản chi"
             value={sort}
             onChange={(event) => {
@@ -134,26 +129,26 @@ export default function AdminExpensesPage() {
             ]}
           />
           <Input
-            label="Từ ngày"
+            label="From Date"
             type="date"
             value={filters.fromDate}
             onChange={(event) => changeFilter("fromDate", event.target.value)}
           />
           <Input
-            label="Đến ngày"
+            label="To Date"
             type="date"
             value={filters.toDate}
             onChange={(event) => changeFilter("toDate", event.target.value)}
           />
           <Input
-            label="Số tiền từ"
+            label="Min Amount"
             type="number"
             min="0"
             value={filters.minAmount}
             onChange={(event) => changeFilter("minAmount", event.target.value)}
           />
           <Input
-            label="Số tiền đến"
+            label="Max Amount"
             type="number"
             min="0"
             value={filters.maxAmount}
@@ -190,7 +185,7 @@ export default function AdminExpensesPage() {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[860px] text-left text-sm">
+              <table className="w-full text-left text-sm">
                 <thead className="border-b border-[#E2E8F0] bg-slate-50/80 text-xs font-semibold uppercase tracking-wider text-[#515f74]">
                   <tr>
                     <th scope="col" className="px-6 py-3.5">User / Account</th>
@@ -209,12 +204,12 @@ export default function AdminExpensesPage() {
                     <tr key={expense.id} className="transition-colors hover:bg-slate-50/70">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-blue-200 bg-blue-100 text-xs font-bold text-blue-700">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-blue-200 bg-blue-100 text-xs font-bold text-[#004ac6]">
                             {expense.userName.slice(0, 2).toUpperCase()}
                           </div>
                           <div className="min-w-0">
                             <p className="truncate font-semibold text-gray-900">{expense.userName}</p>
-                            <p className="truncate text-xs text-gray-500">{expense.userEmail}</p>
+                            <p className="truncate text-[11px] text-[#515f74]">User ID: {expense.userId}</p>
                           </div>
                         </div>
                       </td>
@@ -222,8 +217,8 @@ export default function AdminExpensesPage() {
                       <td className="px-4 py-4">
                         <span className="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">{expense.categoryName}</span>
                       </td>
-                      <td className="px-4 py-4 text-right font-semibold text-red-600">{formatCurrency(expense.amount)}</td>
-                      <td className="px-4 py-4 text-xs font-medium text-gray-600">{formatDate(expense.date)}</td>
+                      <td className="px-4 py-4 text-right font-mono font-bold text-red-600">{formatCurrency(expense.amount)}</td>
+                      <td className="px-4 py-4 text-xs font-medium text-[#515f74]">{formatDate(expense.date)}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -13,6 +13,7 @@ import {
   PiggyBank,
   BarChart3,
   LogOut,
+  Plus,
   X,
 } from "lucide-react";
 
@@ -90,7 +91,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-50 flex h-screen w-64 flex-col justify-between border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out lg:translate-x-0",
+          "fixed top-0 left-0 z-50 flex h-screen w-64 flex-col justify-between border-r border-[#E2E8F0] bg-white transition-transform duration-300 ease-in-out lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -99,7 +100,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           {/* Logo Brand Header */}
           <div className="mb-7 flex items-center justify-between px-2">
             <Link href="/dashboard" className="flex items-center gap-3 no-underline">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm shadow-blue-600/30">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#004ac6] to-[#2563eb] text-white shadow-md">
                 <svg
                   width="24"
                   height="24"
@@ -117,7 +118,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 </svg>
               </div>
               <div className="flex flex-col">
-                <span className="text-lg font-bold tracking-tight text-blue-700">
+                <span className="text-lg font-bold tracking-tight text-[#004ac6]">
                   FinTrack Pro
                 </span>
                 <span className="text-xs font-medium text-slate-400">
@@ -135,6 +136,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             </button>
           </div>
 
+          <Link
+            href="/expenses/new"
+            onClick={onClose}
+            className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-[#004ac6] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#2563eb]"
+          >
+            <Plus className="h-[18px] w-[18px]" aria-hidden="true" />
+            Add Expense
+          </Link>
+
           {/* Navigation Links */}
           <nav className="flex flex-col gap-1">
             {USER_MENU.map((item) => {
@@ -149,16 +159,16 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   className={cn(
                     "group flex items-center gap-3.5 rounded-xl px-3.5 py-3 text-[15px] font-medium transition-all",
                     isActive
-                      ? "bg-blue-50 font-semibold text-blue-600"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                        ? "border-l-4 border-[#004ac6] bg-[#eff4ff] font-semibold text-[#004ac6]"
+                        : "text-[#515f74] hover:bg-[#F8FAFC] hover:text-[#131b2e]"
                   )}
                 >
                   <Icon
                     className={cn(
                       "h-5 w-5 shrink-0 transition-colors",
                       isActive
-                        ? "text-blue-600"
-                        : "text-slate-400 group-hover:text-slate-600"
+                        ? "text-[#004ac6]"
+                        : "text-[#515f74]/60 group-hover:text-[#515f74]"
                     )}
                   />
                   <span>{item.label}</span>
