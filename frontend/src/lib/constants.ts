@@ -42,6 +42,7 @@ export const ADMIN_MENU = [
   { label: "Categories", href: ROUTES.ADMIN_CATEGORIES, icon: "Tag" },
   { label: "Budget Templates", href: ROUTES.ADMIN_BUDGET_TEMPLATES, icon: "FileText" },
   { label: "Expenses", href: ROUTES.ADMIN_EXPENSES, icon: "Receipt" },
+  { label: "Incomes", href: ROUTES.ADMIN_INCOMES, icon: "Wallet" },
   { label: "Activity Logs", href: ROUTES.ADMIN_ACTIVITY_LOGS, icon: "Activity" },
 ] as const;
 
