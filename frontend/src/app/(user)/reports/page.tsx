@@ -188,7 +188,7 @@ export default function ReportsPage() {
 
       {hasError && (
         <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
-          Không thể tải đầy đủ dữ liệu báo cáo. Vui lòng thử lại sau.
+          Unable to load complete report data. Please try again later.
         </div>
       )}
 
@@ -204,7 +204,7 @@ export default function ReportsPage() {
               <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-rose-500" />Expense</span>
             </div>
           </div>
-          {isLoading ? renderState("Đang tải dữ liệu xu hướng...") : trendPoints.length === 0 ? renderState("Chưa có dữ liệu xu hướng") : (
+          {isLoading ? renderState("Loading trend data...") : trendPoints.length === 0 ? renderState("No trend data available") : (
             <div className="flex h-64 items-end justify-between gap-2 px-1 sm:gap-4">
             {trendPoints.map((point: ReportTrendPoint) => (
               <div key={point.period} className="flex min-w-0 flex-1 flex-col items-center gap-2">
@@ -239,7 +239,7 @@ export default function ReportsPage() {
               Total: {money.format(totalExpense)}
             </span>
           </div>
-          {isLoading ? renderState("Đang tải phân bổ danh mục...") : categories.length === 0 ? renderState("Chưa có dữ liệu danh mục") : (
+          {isLoading ? renderState("Loading category distribution...") : categories.length === 0 ? renderState("No category data available") : (
           <div className="space-y-5 pt-1">
             {categories.map((category, index) => (
               <div key={category.name}>

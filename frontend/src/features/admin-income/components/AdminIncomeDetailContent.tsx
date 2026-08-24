@@ -25,18 +25,18 @@ export default function AdminIncomeDetailContent({ incomeId }: AdminIncomeDetail
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   if (incomeQuery.isLoading) {
-    return <div className="animate-pulse space-y-4" aria-label="Đang tải khoản thu nhập"><div className="h-8 w-64 rounded bg-gray-200" /><div className="h-96 rounded-2xl bg-gray-100" /></div>;
+    return <div className="animate-pulse space-y-4" aria-label="Loading income record"><div className="h-8 w-64 rounded bg-gray-200" /><div className="h-96 rounded-2xl bg-gray-100" /></div>;
   }
 
   if (incomeQuery.isError || !incomeQuery.data) {
     return (
       <div className="flex min-h-64 flex-col items-center justify-center gap-3 text-center">
         <AlertCircle className="h-9 w-9 text-red-500" aria-hidden="true" />
-        <p className="font-medium text-gray-900">Không thể tải khoản thu nhập</p>
-        <p className="text-sm text-gray-500">Khoản thu nhập không tồn tại hoặc đã xảy ra lỗi kết nối.</p>
+        <p className="font-medium text-gray-900">Unable to load income record</p>
+        <p className="text-sm text-gray-500">The income record does not exist or a connection error occurred.</p>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={() => incomeQuery.refetch()}>Thử lại</Button>
-          <Link href="/admin/incomes" className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Quay lại</Link>
+          <Button variant="outline" onClick={() => incomeQuery.refetch()}>Try again</Button>
+          <Link href="/admin/incomes" className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Back</Link>
         </div>
       </div>
     );
@@ -44,7 +44,7 @@ export default function AdminIncomeDetailContent({ incomeId }: AdminIncomeDetail
 
   const income = incomeQuery.data;
   const mutationError = updateMutation.isError || deleteMutation.isError
-    ? "Không thể cập nhật khoản thu nhập. Vui lòng thử lại."
+    ? "Unable to update income record. Please try again."
     : undefined;
 
   const submitUpdate = (data: AdminIncomeUpdateRequest) => {

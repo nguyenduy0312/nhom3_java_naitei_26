@@ -39,19 +39,19 @@ export default function AdminBudgetTemplatesPage() {
       {isError && (
         <Card>
           <div className="flex min-h-48 items-center justify-center text-sm text-red-600">
-            Không thể tải danh sách mẫu ngân sách.
+            Unable to load budget templates.
           </div>
         </Card>
       )}
 
       {deleteMutation.isError && (
-        <p className="text-sm text-red-600">Không thể xóa mẫu ngân sách. Vui lòng thử lại.</p>
+        <p className="text-sm text-red-600">Unable to delete budget template. Please try again.</p>
       )}
 
       {!isLoading && !isError && templates?.length === 0 && (
         <Card>
           <div className="flex min-h-48 items-center justify-center text-sm text-gray-500">
-            Chưa có mẫu ngân sách nào.
+            No budget templates found.
           </div>
         </Card>
       )}

@@ -53,7 +53,7 @@ export default function AdminIncomesPage() {
     setFromDate(from);
     setToDate(to);
     setPage(0);
-    setDateError(from && to && from > to ? "Ngày bắt đầu không được sau ngày kết thúc" : "");
+    setDateError(from && to && from > to ? "Start date cannot be after end date" : "");
   };
 
   const resetFilters = () => {
@@ -108,7 +108,7 @@ export default function AdminIncomesPage() {
             value={userId}
             onChange={(event) => { setUserId(event.target.value); setPage(0); }}
             options={[
-              { label: "Tất cả người dùng", value: "" },
+              { label: "All Users", value: "" },
               ...users.map((user) => ({ label: `${user.name} (${user.email})`, value: user.id })),
             ]}
           />
@@ -123,38 +123,38 @@ export default function AdminIncomesPage() {
         </div>
         <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <Select
-            label="Danh mục"
+            label="Category"
             value={categoryId}
             onChange={(event) => { setCategoryId(event.target.value); setPage(0); }}
             options={[
-              { label: "Tất cả danh mục", value: "" },
+              { label: "All Categories", value: "" },
               ...categories.map((category) => ({ label: category.name, value: category.id })),
             ]}
           />
           <Input
-            label="Từ ngày"
+            label="From Date"
             type="date"
             value={fromDate}
             error={dateError}
             onChange={(event) => updateDate(event.target.value, toDate)}
           />
           <Input
-            label="Đến ngày"
+            label="To Date"
             type="date"
             value={toDate}
             onChange={(event) => updateDate(fromDate, event.target.value)}
           />
           <Select
-            label="Sắp xếp"
+            label="Sort"
             value={sort}
             onChange={(event) => { setSort(event.target.value); setPage(0); }}
             options={[
-              { label: "Ngày mới nhất", value: "date,desc" },
-              { label: "Ngày cũ nhất", value: "date,asc" },
-              { label: "Số tiền tăng dần", value: "amount,asc" },
-              { label: "Số tiền giảm dần", value: "amount,desc" },
-              { label: "Tên A-Z", value: "title,asc" },
-              { label: "Tên Z-A", value: "title,desc" },
+              { label: "Newest date", value: "date,desc" },
+              { label: "Oldest date", value: "date,asc" },
+              { label: "Amount ascending", value: "amount,asc" },
+              { label: "Amount descending", value: "amount,desc" },
+              { label: "Name A-Z", value: "title,asc" },
+              { label: "Name Z-A", value: "title,desc" },
             ]}
           />
         </div>
@@ -164,12 +164,12 @@ export default function AdminIncomesPage() {
         {query.isError ? (
           <div className="flex min-h-64 flex-col items-center justify-center gap-3 p-6 text-center">
             <AlertCircle className="h-9 w-9 text-red-500" aria-hidden="true" />
-            <p className="font-medium text-gray-900">Không thể tải danh sách khoản thu nhập</p>
-            <p className="text-sm text-gray-500">Vui lòng kiểm tra kết nối và thử lại.</p>
-            <Button variant="outline" onClick={() => query.refetch()}>Thử lại</Button>
+            <p className="font-medium text-gray-900">Unable to load income records</p>
+            <p className="text-sm text-gray-500">Check your connection and try again.</p>
+            <Button variant="outline" onClick={() => query.refetch()}>Try again</Button>
           </div>
         ) : query.isLoading ? (
-          <div className="animate-pulse space-y-3 p-6" aria-label="Đang tải danh sách khoản thu nhập">
+          <div className="animate-pulse space-y-3 p-6" aria-label="Loading income records">
             <div className="h-10 rounded bg-gray-200" />
             {Array.from({ length: 6 }).map((_, index) => <div key={index} className="h-14 rounded bg-gray-100" />)}
           </div>
@@ -190,7 +190,7 @@ export default function AdminIncomesPage() {
                 <tbody className="divide-y divide-[#E2E8F0]">
                   {visibleItems.length === 0 ? (
                     <tr><td colSpan={6} className="px-6 py-16 text-center text-gray-500">
-                      {hasActiveFilter ? "Không tìm thấy khoản thu nhập phù hợp" : "Chưa có khoản thu nhập nào"}
+                      {hasActiveFilter ? "No matching income records found" : "No income records found"}
                     </td></tr>
                   ) : visibleItems.map((income) => (
                     <tr key={income.id} onClick={() => router.push(`/admin/incomes/${income.id}`)} className="group cursor-pointer transition-colors hover:bg-slate-50/70">
@@ -231,7 +231,7 @@ export default function AdminIncomesPage() {
             {data && (
               <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#E2E8F0] bg-slate-50/40 px-6 py-4 text-sm text-gray-600">
                 <span>
-                  Hiển thị <strong>{data.totalItems === 0 ? 0 : data.page * data.size + 1}–{data.page * data.size + data.items.length}</strong> trên tổng <strong>{data.totalItems}</strong> khoản thu nhập
+                  Showing <strong>{data.totalItems === 0 ? 0 : data.page * data.size + 1}–{data.page * data.size + data.items.length}</strong> of <strong>{data.totalItems}</strong> income records
                 </span>
                 <div className={query.isFetching ? "opacity-60" : undefined} aria-busy={query.isFetching}>
                   <Pagination currentPage={data.page} totalPages={data.totalPages} onPageChange={setPage} />
