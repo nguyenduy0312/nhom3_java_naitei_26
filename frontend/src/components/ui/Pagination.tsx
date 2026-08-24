@@ -45,9 +45,10 @@ export default function Pagination({
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 0}
-        className="rounded-lg p-2 text-[#515f74] transition-colors hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-lg border border-[#E2E8F0] bg-white p-2 text-[#515f74] transition-colors hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-40"
       >
         <ChevronLeft className="h-4 w-4" />
+        <span>Previous</span>
       </button>
 
       {getPageNumbers().map((page, idx) =>
@@ -60,10 +61,10 @@ export default function Pagination({
             key={page}
             onClick={() => onPageChange(page)}
             className={cn(
-              "h-9 min-w-[36px] rounded-lg text-sm font-medium transition-colors",
+              "h-8 min-w-[32px] rounded-lg border text-sm font-semibold transition-colors",
               page === currentPage
-                ? "bg-[#004ac6] text-white shadow-sm"
-                : "text-[#515f74] hover:bg-[#F8FAFC]"
+                ? "border-[#004ac6] bg-[#004ac6] text-white"
+                : "border-[#E2E8F0] bg-white text-[#515f74] hover:bg-[#F8FAFC]"
             )}
           >
             {page + 1}
@@ -74,8 +75,9 @@ export default function Pagination({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage >= totalPages - 1}
-        className="rounded-lg p-2 text-[#515f74] transition-colors hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-lg border border-[#E2E8F0] bg-white p-2 text-[#515f74] transition-colors hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-40"
       >
+        <span>Next</span>
         <ChevronRight className="h-4 w-4" />
       </button>
     </div>
